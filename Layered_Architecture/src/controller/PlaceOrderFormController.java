@@ -3,6 +3,9 @@ package controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
+import dao.CustomerDAOImpl;
+import dao.ItemDAOImpl;
+import dao.OrderDAOImpl;
 import db.DBConnection;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -19,6 +22,7 @@ import javafx.stage.Stage;
 import model.CustomerDTO;
 import model.ItemDTO;
 import model.OrderDetailDTO;
+import view.tdm.CustomerTM;
 import view.tdm.OrderDetailTM;
 
 import java.io.IOException;
@@ -26,6 +30,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -97,7 +102,9 @@ public class PlaceOrderFormController {
             if (newValue != null) {
                 try {
                     /*Search Customer*/
-                    Connection connection = DBConnection.getDbConnection().getConnection();
+                   Connection connection = DBConnection.getDbConnection().getConnection();
+                    OrderDAOImpl orderDAO = new OrderDAOImpl();
+                    //ArrayList<CustomerDTO> allCustomers = customerDAO.getAllCustomers();
                     try {
                         if (!existCustomer(newValue + "")) {
 //                            "There is no such customer associated with the id " + id
@@ -108,7 +115,7 @@ public class PlaceOrderFormController {
                         pstm.setString(1, newValue + "");
                         ResultSet rst = pstm.executeQuery();
                         rst.next();
-                        CustomerDTO customerDTO = new CustomerDTO(newValue + "", rst.getString("name"), rst.getString("address"));
+                       CustomerDTO customerDTO = new CustomerDTO(newValue + "", rst.getString("name"), rst.getString("address"));
 
                         txtCustomerName.setText(customerDTO.getName());
                     } catch (SQLException e) {
@@ -185,12 +192,10 @@ public class PlaceOrderFormController {
         loadAllCustomerIds();
         loadAllItemCodes();
     }
-
+    //Exist Item
     private boolean existItem(String code) throws SQLException, ClassNotFoundException {
-        Connection connection = DBConnection.getDbConnection().getConnection();
-        PreparedStatement pstm = connection.prepareStatement("SELECT code FROM Item WHERE code=?");
-        pstm.setString(1, code);
-        return pstm.executeQuery().next();
+        ItemDAOImpl itemDAO = new ItemDAOImpl();
+        return itemDAO.existItem(code);
     }
 
     boolean existCustomer(String id) throws SQLException, ClassNotFoundException {
