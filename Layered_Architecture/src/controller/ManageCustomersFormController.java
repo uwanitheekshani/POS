@@ -77,7 +77,6 @@ public class ManageCustomersFormController {
         /*Get all customers*/
    try {
 
-
         ArrayList<CustomerDTO> allCustomers = customerDAO.getAllCustomers();
 
         for (CustomerDTO customer : allCustomers) {

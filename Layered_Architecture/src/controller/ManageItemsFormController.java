@@ -233,7 +233,7 @@ public class ManageItemsFormController {
     //generate new id
     private String generateNewId() {
         try {
-            
+
             return itemDAO.generateNewId();
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
